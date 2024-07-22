@@ -28,9 +28,10 @@ if file is not None:
     st.write(df)
 
     # Select the columns to cluster
-    cols = st.multiselect("Select columns to cluster", df.columns)
+    cols = ['Keinginan memiliki mobil', 'Kesiapan pembayaran booking fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan mobil']
 
-    if len(cols) > 0:
+    # Ensure that the required columns are in the dataframe
+    if all(col in df.columns for col in cols):
         # Create a clustering data frame
         clustering_data = df[cols + ['Nama Customer', 'Reference To']]
 
