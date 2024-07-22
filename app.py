@@ -74,14 +74,15 @@ if file is not None:
         #ax.set_title("Clustering Result")
         #st.pyplot(fig)
 
-        fig, ax = plt.subplots(figsize=(8, 6))
-        for cluster in clustering_data['cluster'].unique():
-        subset = clustering_data[clustering_data['cluster'] == cluster]
-        ax.scatter(subset[cols[0]], subset[cols[1]], label=f'Cluster {cluster}')
+        # Plotting the clustering result using scatter plot
+        st.write("Clustering Visualization:")
+        fig, ax = plt.subplots()
+        scatter = ax.scatter(clustering_data[cols[0]], clustering_data[cols[1]], c=clustering_data['cluster'])
         ax.set_xlabel(cols[0])
         ax.set_ylabel(cols[1])
         ax.set_title("Clustering Result")
-        ax.legend()
+        legend1 = ax.legend(*scatter.legend_elements(), title="Clusters")
+        ax.add_artist(legend1)
         st.pyplot(fig)
         
         # Display the clustering result
