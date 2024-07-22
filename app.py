@@ -52,7 +52,7 @@ if file is not None:
         # Perform clustering
         kmeans = KMeans(n_clusters=3, init=np.array([[0.0, 0.0, 0.0, 0.0], [0.5, 0.5, 0.5, 0.5], [0.8, 0.8, 0.8, 0.8]]))
         n_iter = st.selectbox("Number of iterations (n_iter)", ["1", "10", "30", "50"])
-        max_iter = st.selectbox("Maximum number of iterations (max_iter)", [ "16", "32", "64", "128", "256"])
+        #max_iter = st.selectbox("Maximum number of iterations (max_iter)", [ "16", "32", "64", "128", "256"])
         algorithm = st.selectbox("Algorithm", ["auto", "full", "elkan"])
         clustering_data['cluster'] = kmeans.fit_predict(clustering_data[cols])
 
