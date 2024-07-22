@@ -52,7 +52,14 @@ if file is not None:
         clustering_data[cols] = scaler.fit_transform(clustering_data[cols])
 
         # Perform clustering
-        kmeans = KMeans(n_clusters=3, init=np.array([[0.0, 0.0, 0.0, 0.0], [0.4, 0.4, 0.4, 0.4], [0.8, 0.8, 0.8, 0.8]]))
+        kmeans = KMeans(
+            n_clusters=3,
+            init=np.array([[0.2, 0.2, 0.2, 0.2], [0.5, 0.5, 0.5, 0.5], [0.8, 0.8, 0.8, 0.8]]),
+            algorithm='elkan',
+            random_state=64,
+            n_init=1,
+            max_iter=100
+        )
         clustering_data['cluster'] = kmeans.fit_predict(clustering_data[cols])
 
         # Map cluster labels
