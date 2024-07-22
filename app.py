@@ -13,7 +13,7 @@ def load_data(file):
     return pd.read_csv(file)
 
 # Create a Streamlit app
-st.title("Clustering App")
+st.title("Clustering App For Leads Auto2000 Kramat Jati")
 st.write("Upload your CSV file to perform clustering")
 
 # File uploader
@@ -24,7 +24,7 @@ if file is not None:
     df = load_data(file)
 
     # Display the uploaded data
-    st.write("Uploaded Data:")
+    st.write("Upload Data:")
     st.write(df)
 
     # Define the columns to cluster
@@ -61,16 +61,16 @@ if file is not None:
 
         # Calculate the Silhouette score
         silhouette_avg = silhouette_score(clustering_data[cols], clustering_data['cluster'])
-        st.write("Silhouette score:", silhouette_avg)
+        st.write("Silhouette score clustering:", silhouette_avg)
 
         # Calculate the centroid coordinates for each cluster
         centroids = kmeans.cluster_centers_
-        st.write("Centroid coordinates for each cluster:")
+        st.write("Centroid setiap cluster:")
         for i, centroid in enumerate(centroids):
             st.write(f"Cluster {i}: {centroid}")
 
         # Display the clustering result
-        st.write("Clustering result:")
+        st.write("Hasil clustering:")
         st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
 
         # Reorder columns: 'Nama Customer', 'Reference To', followed by other columns
@@ -78,7 +78,7 @@ if file is not None:
         clustering_data = clustering_data[ordered_cols]
 
         # Display normalized and clustered data
-        st.write("Normalized and Clustered Data:")
+        st.write("Data Final Clustering:")
         st.write(clustering_data)
 
         # Apply PCA to reduce dimensions to 2D
@@ -89,9 +89,9 @@ if file is not None:
             clustering_data['pca2'] = pca_components[:, 1]
 
             # Plotting the clustering result using PCA scatter plot
-            st.write("PCA Clustering Visualization:")
+            st.write("PCA Clustering Visualisasi:")
             fig, ax = plt.subplots()
-            scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster'])
+            scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster_label'])
             ax.set_xlabel('PCA Component 1')
             ax.set_ylabel('PCA Component 2')
             ax.set_title("PCA Clustering Result")
