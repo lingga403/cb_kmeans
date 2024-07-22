@@ -67,12 +67,12 @@ if file is not None:
             st.write(f"Cluster {i}: {centroid}")
 
         # Visualize the clusters
-        fig, ax = plt.subplots()
-        ax.scatter(clustering_data[cols[0]], clustering_data[cols[1]], c=clustering_data['cluster'])
-        ax.set_xlabel(cols[0])
-        ax.set_ylabel(cols[1])
-        ax.set_title("Clustering Result")
-        st.pyplot(fig)
+        #fig, ax = plt.subplots()
+        #ax.scatter(clustering_data[cols[0]], clustering_data[cols[1]], c=clustering_data['cluster'])
+        #ax.set_xlabel(cols[0])
+        #ax.set_ylabel(cols[1])
+        #ax.set_title("Clustering Result")
+        #st.pyplot(fig)
 
         fig, ax = plt.subplots(figsize=(8, 6))
         for cluster in clustering_data['cluster'].unique():
