@@ -76,23 +76,37 @@ if file is not None:
 
         # Display normalized and clustered data
         st.write("Normalized and Clustered Data:")
-        st.write(clustering_data)
+        st.write(clustering_data[cols])
 
         # Plotting the clustering result using scatter plot
-        st.write("Clustering Visualization:")
+        # Apply PCA to reduce dimensions to 2D
+        pca = PCA(n_components=2)
+        pca_components = pca.fit_transform(clustering_data[cols])
+        clustering_data['pca1'] = pca_components[:, 0]
+        clustering_data['pca2'] = pca_components[:, 1]
+
+        # Plotting the clustering result using PCA scatter plot
+        st.write("PCA Clustering Visualization:")
         fig, ax = plt.subplots()
-        scatter = ax.scatter(clustering_data[cols[0]], clustering_data[cols[1]], c=clustering_data['cluster'])
-        ax.set_xlabel(cols[0])
-        ax.set_ylabel(cols[1])
-        ax.set_title("Clustering Result")
+        scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster'])
+        ax.set_xlabel('PCA Component 1')
+        ax.set_ylabel('PCA Component 2')
+        ax.set_title("PCA Clustering Result")
+        
+        # Adding legend
         legend1 = ax.legend(*scatter.legend_elements(), title="Clusters")
         ax.add_artist(legend1)
         st.pyplot(fig)
-        
+
         # Display the clustering result
         st.write("Clustering result:")
         st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster']])
+        
+        # Reorder columns: 'Nama Customer', 'Reference To', followed by other columns
+        ordered_cols = ['Nama Customer', 'Reference To', 'cluster'] + cols
+        clustering_data = clustering_data[ordered_cols]
 
         # Display normalized and clustered data
         st.write("Normalized and Clustered Data:")
         st.write(clustering_data)
+        
