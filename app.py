@@ -54,7 +54,7 @@ if file is not None:
         # Perform clustering
         kmeans = KMeans(
             n_clusters=3,
-            init=np.array([[0.2, 0.2, 0.2, 0.2], [0.5, 0.5, 0.5, 0.5], [0.8, 0.8, 0.8, 0.8]]),
+            init=np.array([[0.0, 0.0, 0.0, 0.0], [0.4, 0.4, 0.4, 0.4], [0.8, 0.8, 0.8, 0.8]]),
             algorithm='elkan',
             random_state=64,
             n_init=1,
@@ -98,7 +98,7 @@ if file is not None:
             # Plotting the clustering result using PCA scatter plot
             st.write("PCA Clustering Visualisasi:")
             fig, ax = plt.subplots()
-            scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster_label'])
+            scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster'])
             ax.set_xlabel('PCA Component 1')
             ax.set_ylabel('PCA Component 2')
             ax.set_title("PCA Clustering Result")
