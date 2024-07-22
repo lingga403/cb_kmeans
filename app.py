@@ -92,3 +92,7 @@ if file is not None:
         # Display the clustering result
         st.write("Clustering result:")
         st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster']])
+
+        # Display normalized and clustered data
+        st.write("Normalized and Clustered Data:")
+        st.write(clustering_data)
