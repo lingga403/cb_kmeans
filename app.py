@@ -74,6 +74,10 @@ if file is not None:
         #ax.set_title("Clustering Result")
         #st.pyplot(fig)
 
+        # Display normalized and clustered data
+        st.write("Normalized and Clustered Data:")
+        st.write(clustering_data)
+
         # Plotting the clustering result using scatter plot
         st.write("Clustering Visualization:")
         fig, ax = plt.subplots()
@@ -87,4 +91,4 @@ if file is not None:
         
         # Display the clustering result
         st.write("Clustering result:")
-        st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster']])
+        st.write(clustering_data[[['Nama Customer', 'Reference To'] + 'clustering_data' + ['cluster']]])
