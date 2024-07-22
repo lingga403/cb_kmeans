@@ -50,9 +50,9 @@ if file is not None:
         clustering_data[cols] = scaler.fit_transform(clustering_data[cols])
 
         # Perform clustering
-        kmeans = KMeans(n_clusters=3, init=np.array([[0.0, 0.0, 0.0, 0.0], [0.5, 0.5, 0.5, 0.5], [0.8, 0.8, 0.8, 0.8]]))
+        kmeans = KMeans(n_clusters=3, init=np.array([[0.0, 0.0, 0.0, 0.0], [0.4, 0.4, 0.4, 0.4], [0.8, 0.8, 0.8, 0.8]]))
         n_iter = st.selectbox("Number of iterations (n_iter)", ["1", "10", "30", "50"])
-        #max_iter = st.selectbox("Maximum number of iterations (max_iter)", [ "16", "32", "64", "128", "256"])
+        max_iter = st.selectbox("Maximum number of iterations (max_iter)", [ "16", "32", "64", "128", "256"])
         algorithm = st.selectbox("Algorithm", ["auto", "full", "elkan"])
         clustering_data['cluster'] = kmeans.fit_predict(clustering_data[cols])
 
@@ -74,6 +74,16 @@ if file is not None:
         ax.set_title("Clustering Result")
         st.pyplot(fig)
 
+        fig, ax = plt.subplots(figsize=(8, 6))
+        for cluster in clustering_data['cluster'].unique():
+        subset = clustering_data[clustering_data['cluster'] == cluster]
+        ax.scatter(subset[cols[0]], subset[cols[1]], label=f'Cluster {cluster}')
+        ax.set_xlabel(cols[0])
+        ax.set_ylabel(cols[1])
+        ax.set_title("Clustering Result")
+        ax.legend()
+        st.pyplot(fig)
+        
         # Display the clustering result
         st.write("Clustering result:")
         st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster']])
