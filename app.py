@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -27,7 +27,7 @@ if file is not None:
     st.write("Uploaded Data:")
     st.write(df)
 
-    # Select the columns to cluster
+    # Define the columns to cluster
     cols = ['Keinginan memiliki mobil', 'Kesiapan pembayaran booking fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan mobil']
 
     # Ensure that the required columns are in the dataframe
@@ -53,10 +53,11 @@ if file is not None:
 
         # Perform clustering
         kmeans = KMeans(n_clusters=3, init=np.array([[0.0, 0.0, 0.0, 0.0], [0.4, 0.4, 0.4, 0.4], [0.8, 0.8, 0.8, 0.8]]))
-        n_iter = st.selectbox("Number of iterations (n_iter)", ["1", "10", "30", "50"])
-        max_iter = st.selectbox("Maximum number of iterations (max_iter)", [ "16", "32", "64", "128", "256"])
-        algorithm = st.selectbox("Algorithm", ["auto", "full", "elkan"])
         clustering_data['cluster'] = kmeans.fit_predict(clustering_data[cols])
+
+        # Map cluster labels
+        cluster_mapping = {0: 'low', 1: 'mid', 2: 'hot'}
+        clustering_data['cluster_label'] = clustering_data['cluster'].map(cluster_mapping)
 
         # Calculate the Silhouette score
         silhouette_avg = silhouette_score(clustering_data[cols], clustering_data['cluster'])
@@ -68,47 +69,41 @@ if file is not None:
         for i, centroid in enumerate(centroids):
             st.write(f"Cluster {i}: {centroid}")
 
-        # Visualize the clusters
-        #fig, ax = plt.subplots()
-        #ax.scatter(clustering_data[cols[0]], clustering_data[cols[1]], c=clustering_data['cluster'])
-        #ax.set_xlabel(cols[0])
-        #ax.set_ylabel(cols[1])
-        #ax.set_title("Clustering Result")
-        #st.pyplot(fig)
-
-        # Display normalized and clustered data
-        st.write("Normalized and Clustered Data:")
-        st.write(clustering_data[cols])
-
-        # Plotting the clustering result using scatter plot
-        # Apply PCA to reduce dimensions to 2D
-        pca = PCA(n_components=2)
-        pca_components = pca.fit_transform(clustering_data[cols])
-        clustering_data['pca1'] = pca_components[:, 0]
-        clustering_data['pca2'] = pca_components[:, 1]
-
-        # Plotting the clustering result using PCA scatter plot
-        st.write("PCA Clustering Visualization:")
-        fig, ax = plt.subplots()
-        scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster'])
-        ax.set_xlabel('PCA Component 1')
-        ax.set_ylabel('PCA Component 2')
-        ax.set_title("PCA Clustering Result")
-        
-        # Adding legend
-        legend1 = ax.legend(*scatter.legend_elements(), title="Clusters")
-        ax.add_artist(legend1)
-        st.pyplot(fig)
-
         # Display the clustering result
         st.write("Clustering result:")
-        st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster']])
-        
+        st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
+
         # Reorder columns: 'Nama Customer', 'Reference To', followed by other columns
-        ordered_cols = ['Nama Customer', 'Reference To', 'cluster'] + cols
+        ordered_cols = ['Nama Customer', 'Reference To', 'cluster', 'cluster_label'] + cols
         clustering_data = clustering_data[ordered_cols]
 
         # Display normalized and clustered data
         st.write("Normalized and Clustered Data:")
         st.write(clustering_data)
-        
+
+        # Apply PCA to reduce dimensions to 2D
+        try:
+            pca = PCA(n_components=2)
+            pca_components = pca.fit_transform(clustering_data[cols])
+            clustering_data['pca1'] = pca_components[:, 0]
+            clustering_data['pca2'] = pca_components[:, 1]
+
+            # Plotting the clustering result using PCA scatter plot
+            st.write("PCA Clustering Visualization:")
+            fig, ax = plt.subplots()
+            scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster'])
+            ax.set_xlabel('PCA Component 1')
+            ax.set_ylabel('PCA Component 2')
+            ax.set_title("PCA Clustering Result")
+
+            # Adding legend
+            legend1 = ax.legend(*scatter.legend_elements(), title="Clusters")
+            ax.add_artist(legend1)
+
+            # Display the plot in Streamlit
+            st.pyplot(fig)
+        except Exception as e:
+            st.write("An error occurred during PCA transformation:")
+            st.write(e)
+    else:
+        st.write("The uploaded CSV file does not contain all the required columns.")
