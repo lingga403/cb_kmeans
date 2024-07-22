@@ -91,4 +91,4 @@ if file is not None:
         
         # Display the clustering result
         st.write("Clustering result:")
-        st.write(clustering_data[[['Nama Customer', 'Reference To'] + 'clustering_data' + ['cluster']]])
+        st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster']])
