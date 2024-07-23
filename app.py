@@ -48,10 +48,12 @@ if file is not None:
     # Kolom untuk melakukan clustering
     cols = ['Keinginan memiliki mobil', 'Kesiapan pembayaran booking fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan mobil']
 
-    # Verfikasi kolom data tersedia di CSV
-    if all(col in df.columns for col in cols):
-        # Data frame untuk clustering
-        clustering_data = df[cols + ['Nama Customer', 'Reference To']]
+   # Memisahkan kolom kolom
+    additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan']
+    if all(col in df.columns for col in cols + additional_cols + ['Nama Customer', 'Reference To']):
+        
+        # Membuat clustering data frame
+        clustering_data = df[cols + additional_cols + ['Nama Customer', 'Reference To']]
 
         # Encode label data kategori
         mappings = {
@@ -98,11 +100,11 @@ if file is not None:
         st.write("Hasil clustering:")
         st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
 
-        # Memanggil kolom kembali
-        ordered_cols = ['Nama Customer', 'Reference To', 'cluster', 'cluster_label', 'Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan'] + cols
+        # Memanngil kolom kembali
+        ordered_cols = ['Nama Customer', 'Reference To', 'Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan', 'cluster', 'cluster_label'] + cols
         clustering_data = clustering_data[ordered_cols]
 
-        # Display normalized and clustered data
+        # Menampilkan hasil
         st.write("Data Final Clustering:")
         st.write(clustering_data)
 
