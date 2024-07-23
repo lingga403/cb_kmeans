@@ -13,7 +13,8 @@ def load_data(file):
     return pd.read_csv(file)
 
 # Create a Streamlit app
-st.image("logoa2000.png", use_column_width=True,  width=150, caption="Auto 2000 Logo")
+st.set_page_config(page_title="Clustering App For Leads Auto2000 Kramat Jati", page_icon=":bar_chart:", layout="wide")
+st.image("logoa2000.png", width=100)
 st.title("Clustering App For Leads Auto2000 Kramat Jati")
 st.write("Upload your CSV file to perform clustering")
 
