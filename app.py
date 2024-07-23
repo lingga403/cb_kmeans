@@ -7,37 +7,53 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Load data
+# Membaca Data
 @st.cache_data
 def load_data(file):
     return pd.read_csv(file)
+    
+# Atur Tema
+st.markdown(
+    """
+    <style>
+    :root {
+        --primary-color: #f0f2f6;
+        --background-color: #ffffff;
+        --secondary-background-color: #f0f2f6;
+        --text-color: #262730;
+        --font: sans-serif;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# Create a Streamlit app
+# Header
 st.set_page_config(page_title="Clustering App For Leads Auto2000 Kramat Jati", page_icon=":bar_chart:", layout="wide")
 st.image("logoa2000.png", width=100)
 st.title("Clustering App For Leads Auto2000 Kramat Jati")
 st.write("Upload your CSV file to perform clustering")
 
-# File uploader
+# Melakukan Upload Data
 file = st.file_uploader("Select a CSV file", type=["csv"])
 
 if file is not None:
-    # Load the data
+    # Load data
     df = load_data(file)
 
-    # Display the uploaded data
+    # Display data
     st.write("Upload Data:")
     st.write(df)
 
-    # Define the columns to cluster
+    # Kolom untuk melakukan clustering
     cols = ['Keinginan memiliki mobil', 'Kesiapan pembayaran booking fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan mobil']
 
-    # Ensure that the required columns are in the dataframe
+    # Verfikasi kolom data tersedia di CSV
     if all(col in df.columns for col in cols):
-        # Create a clustering data frame
+        # Data frame untuk clustering
         clustering_data = df[cols + ['Nama Customer', 'Reference To']]
 
-        # Encode categorical data
+        # Encode label data kategori
         mappings = {
             'Keinginan memiliki mobil': {'0-1 bulan': 2, '1-3 bulan': 1, '3-6 bulan': 0},
             'Kesiapan pembayaran booking fee': {'minggu ini': 2, 'bulan ini': 1, 'belum menentukan': 0},
@@ -49,11 +65,11 @@ if file is not None:
             if col in clustering_data.columns:
                 clustering_data[col] = clustering_data[col].map(mapping)
 
-        # Normalize the data
+        # Normalisasi Data
         scaler = MinMaxScaler()
         clustering_data[cols] = scaler.fit_transform(clustering_data[cols])
 
-        # Perform clustering
+        # Melakukan clustering
         kmeans = KMeans(
             n_clusters=3,
             init=np.array([[0.0, 0.0, 0.0, 0.0], [0.4, 0.4, 0.4, 0.4], [0.8, 0.8, 0.8, 0.8]]),
@@ -64,26 +80,26 @@ if file is not None:
         )
         clustering_data['cluster'] = kmeans.fit_predict(clustering_data[cols])
 
-        # Map cluster labels
+        # Mapping cluster
         cluster_mapping = {0: 'low', 1: 'mid', 2: 'hot'}
         clustering_data['cluster_label'] = clustering_data['cluster'].map(cluster_mapping)
 
-        # Calculate the Silhouette score
+        # Menghitung silhouette score
         silhouette_avg = silhouette_score(clustering_data[cols], clustering_data['cluster'])
         st.write("Silhouette score clustering:", silhouette_avg)
 
-        # Calculate the centroid coordinates for each cluster
+        # Menghitung setiap centroid cluster
         centroids = kmeans.cluster_centers_
         st.write("Centroid setiap cluster:")
         for i, centroid in enumerate(centroids):
             st.write(f"Cluster {i}: {centroid}")
 
-        # Display the clustering result
+        # Menampilkan hasil clustering
         st.write("Hasil clustering:")
         st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
 
-        # Reorder columns: 'Nama Customer', 'Reference To', followed by other columns
-        ordered_cols = ['Nama Customer', 'Reference To', 'cluster', 'cluster_label'] + cols
+        # Memanggil kolom kembali
+        ordered_cols = ['Nama Customer', 'Reference To', 'cluster', 'cluster_label', 'Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan'] + cols
         clustering_data = clustering_data[ordered_cols]
 
         # Display normalized and clustered data
