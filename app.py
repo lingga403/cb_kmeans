@@ -89,14 +89,7 @@ if file is not None:
         # Menghitung silhouette score
         silhouette_avg = silhouette_score(clustering_data[cols], clustering_data['cluster'])
         st.write("Silhouette score clustering:", silhouette_avg)
-
-        # Menghitung jarak Euclidean dari setiap data ke centroid
-        def euclidean_distance(point, centroid):
-            return np.sqrt(np.sum((point - centroid)**2))
-
-        df['distance_to_centroid'] = df.apply(lambda row: euclidean_distance(row[:-1], centroids[row['cluster']]), axis=1)
-        print(df)
-
+        
         # Menghitung setiap centroid cluster
         centroids = kmeans.cluster_centers_
         st.write("Centroid setiap cluster:")
@@ -115,6 +108,18 @@ if file is not None:
         st.write("Data Final Clustering:")
         st.write(clustering_data)
 
+        # Menghitung jarak Euclidean dari setiap data ke centroid
+        def euclidean_distance(point, centroid):
+            return np.sqrt(np.sum((point - centroid)**2))
+
+        clustering_data['distance_to_centroid'] = clustering_data.apply(
+            lambda row: euclidean_distance(row[cols].values, centroids[row['cluster']]),
+            axis=1
+        )
+
+        st.write("Data with Distance to Centroid:")
+        st.write(clustering_data)
+        
         # Apply PCA to reduce dimensions to 2D
         try:
             pca = PCA(n_components=2)
