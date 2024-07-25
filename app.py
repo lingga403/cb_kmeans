@@ -90,6 +90,13 @@ if file is not None:
         silhouette_avg = silhouette_score(clustering_data[cols], clustering_data['cluster'])
         st.write("Silhouette score clustering:", silhouette_avg)
 
+        # Menghitung jarak Euclidean dari setiap data ke centroid
+        def euclidean_distance(point, centroid):
+            return np.sqrt(np.sum((point - centroid)**2))
+
+        df['distance_to_centroid'] = df.apply(lambda row: euclidean_distance(row[:-1], centroids[row['cluster']]), axis=1)
+        print(df)
+
         # Menghitung setiap centroid cluster
         centroids = kmeans.cluster_centers_
         st.write("Centroid setiap cluster:")
