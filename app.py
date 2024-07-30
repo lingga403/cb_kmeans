@@ -31,7 +31,7 @@ st.markdown(
 # Header
 #st.set_page_config(page_title="Clustering App For Leads Auto2000 Kramat Jati", page_icon=":bar_chart:", layout="wide")
 st.image("logoa2000.png", width=250)
-st.title("Clustering App  Leads Auto2000 Kramat Jati")
+st.title("Clustering App For Leads Auto2000 Kramat Jati")
 st.write("Upload your CSV file to perform clustering")
 
 # Melakukan Upload Data
@@ -42,8 +42,8 @@ if file is not None:
     df = load_data(file)
 
     # Display data
-    #st.write("Upload Data:")
-    #st.write(df)
+    st.write("Upload Data:")
+    st.write(df)
 
     # Kolom untuk melakukan clustering
     cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan']
