@@ -40,7 +40,8 @@ file = st.file_uploader("Select a CSV file", type=["csv"])
 if file is not None:
     # Load data
     df = load_data(file)
-
+    if 'action' in df.columns:
+        df.drop(columns=['Action'], inplace=True)
     # Display data
     #st.write("Upload Data:")
     #st.write(df)
