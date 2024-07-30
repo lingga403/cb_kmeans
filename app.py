@@ -46,10 +46,10 @@ if file is not None:
     #st.write(df)
 
     # Kolom untuk melakukan clustering
-    cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan']
+    cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuensi penggunaan']
 
    # Memisahkan kolom kolom
-    additional_cols = ['No.', 'Action', 'Reference From', 'Leads Date', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
+    additional_cols = ['No.', 'Action', 'Reference From', 'Alamat', 'Kota', 'Leads Date', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
     if all(col in df.columns for col in cols + additional_cols + ['Customer Name', 'Reference to']):
         
         # Membuat clustering data frame
