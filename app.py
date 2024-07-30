@@ -53,7 +53,7 @@ if file is not None:
     df = load_data(file)
 
     # Remove 'action' column if it exists
-    if 'action' in df.columns:
+    if 'Action' in df.columns:
         df.drop(columns=['Action'], inplace=True)
 
     # Display data
@@ -108,6 +108,12 @@ if file is not None:
         st.write("Centroid setiap cluster:")
         for i, centroid in enumerate(centroids):
             st.write(f"Cluster {i}: {centroid}")
+
+        # Menghitung jarak data ke centroid
+        clustering_data['distance_to_centroid'] = clustering_data.apply(
+            lambda row: euclidean_distance(row[cols].values, centroids[row['cluster']]),
+            axis=1
+        )
 
         # Menampilkan hasil clustering
         st.write("Hasil clustering:")
