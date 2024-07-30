@@ -46,21 +46,21 @@ if file is not None:
     #st.write(df)
 
     # Kolom untuk melakukan clustering
-    cols = ['Keinginan memiliki mobil', 'Kesiapan pembayaran booking fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan mobil']
+    cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan']
 
    # Memisahkan kolom kolom
-    additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan']
+    additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
     if all(col in df.columns for col in cols + additional_cols + ['Nama Customer', 'Reference To']):
         
         # Membuat clustering data frame
-        clustering_data = df[cols + additional_cols + ['Nama Customer', 'Reference To']]
+        clustering_data = df[cols + additional_cols + ['Customer Name', 'Reference to']]
 
         # Encode label data kategori
         mappings = {
-            'Keinginan memiliki mobil': {'0-1 bulan': 2, '1-3 bulan': 1, '3-6 bulan': 0},
-            'Kesiapan pembayaran booking fee': {'minggu ini': 2, 'bulan ini': 1, 'belum menentukan': 0},
-            'Kapan dapat ditemui secara langsung': {'1-2 minggu': 2, '1 bulan': 1, 'belum menentukan': 0},
-            'Frekuseni penggunaan mobil': {'setiap hari': 2, 'diakhir pekan': 1, 'sesekali': 0}
+            'Keinginan membeli': {'0-1 Bulan': 2, '1-3 Bulan': 1, '3-6 Bulan': 0},
+            'Kesiapan pembayaran booking fee': {'Minggu ini': 2, 'Bulan ini': 1, 'Belum menentukan': 0},
+            'Kapan dapat ditemui secara langsung': {'1-2 Minggu': 2, '1 Bulan': 1, 'Belum menentukan': 0},
+            'Frekuseni penggunaan mobil': {'Setiap hari': 2, 'Di akhir pekan': 1, 'Sesekali': 0}
         }
 
         for col, mapping in mappings.items():
@@ -83,7 +83,7 @@ if file is not None:
         clustering_data['cluster'] = kmeans.fit_predict(clustering_data[cols])
 
         # Mapping cluster
-        cluster_mapping = {0: 'low', 1: 'mid', 2: 'hot'}
+        cluster_mapping = {0: 'Low', 1: 'Mid', 2: 'Hot'}
         clustering_data['cluster_label'] = clustering_data['cluster'].map(cluster_mapping)
 
         # Menghitung silhouette score
@@ -101,17 +101,15 @@ if file is not None:
         # st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
 
         # Memanngil kolom kembali
-        ordered_cols = ['Nama Customer', 'Reference To', 'Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan', 'cluster', 'cluster_label'] + cols
+        ordered_cols = ['Customer Name', 'Reference To', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran', 'cluster', 'cluster_label'] + cols
         clustering_data = clustering_data[ordered_cols]
 
         # Menampilkan hasil
-        st.write("Data Final Clustering:")
-        st.write(clustering_data)
-        styled_df = clustering_data.style.background_gradient(cmap='coolwarm')
-        st.dataframe(styled_df)
+        #st.write("Data Final Clustering:")
+        #st.write(clustering_data)
 
         # Filter berdasarkan label cluster
-        selected_clusters = st.multiselect("Pilih cluster untuk ditampilkan", options=['low', 'mid', 'hot'], default=['low', 'mid', 'hot'])
+        selected_clusters = st.multiselect("Pilih cluster untuk ditampilkan", options=['Low', 'Mid', 'Hot'], default=['Low', 'Mid', 'Hot'])
         filtered_data = clustering_data[clustering_data['cluster_label'].isin(selected_clusters)]
 
         # Menampilkan data yang difilter
