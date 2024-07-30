@@ -50,7 +50,7 @@ if file is not None:
 
    # Memisahkan kolom kolom
     additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
-    if all(col in df.columns for col in cols + additional_cols + ['Nama Customer', 'Reference To']):
+    if all(col in df.columns for col in cols + additional_cols + ['Nama Customer', 'Reference to']):
         
         # Membuat clustering data frame
         clustering_data = df[cols + additional_cols + ['Customer Name', 'Reference to']]
@@ -58,9 +58,9 @@ if file is not None:
         # Encode label data kategori
         mappings = {
             'Keinginan membeli': {'0-1 Bulan': 2, '1-3 Bulan': 1, '3-6 Bulan': 0},
-            'Kesiapan pembayaran booking fee': {'Minggu ini': 2, 'Bulan ini': 1, 'Belum menentukan': 0},
+            'Kesiapan pembayaran fee': {'Minggu ini': 2, 'Bulan ini': 1, 'Belum menentukan': 0},
             'Kapan dapat ditemui secara langsung': {'1-2 Minggu': 2, '1 Bulan': 1, 'Belum menentukan': 0},
-            'Frekuseni penggunaan mobil': {'Setiap hari': 2, 'Di akhir pekan': 1, 'Sesekali': 0}
+            'Frekuseni penggunaan': {'Setiap hari': 2, 'Di akhir pekan': 1, 'Sesekali': 0}
         }
 
         for col, mapping in mappings.items():
@@ -101,7 +101,7 @@ if file is not None:
         # st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
 
         # Memanngil kolom kembali
-        ordered_cols = ['Customer Name', 'Reference To', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran', 'cluster', 'cluster_label'] + cols
+        ordered_cols = ['Customer Name', 'Reference to', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran', 'cluster', 'cluster_label'] + cols
         clustering_data = clustering_data[ordered_cols]
 
         # Menampilkan hasil
