@@ -6,7 +6,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
-import plotly.express as px
+
 
 # Fungsi untuk menghitung jarak Euclidean
 def euclidean_distance(point, centroid):
@@ -130,25 +130,5 @@ if file is not None:
         st.write("Data setelah difilter berdasarkan cluster:")
         st.write(filtered_data)
 
-        # Apply PCA to reduce dimensions to 2D
-        try:
-            pca = PCA(n_components=2)
-            pca_components = pca.fit_transform(filtered_data[cols])
-            filtered_data['pca1'] = pca_components[:, 0]
-            filtered_data['pca2'] = pca_components[:, 1]
-
-            # Plotting the clustering result using PCA scatter plot
-            st.write("PCA Clustering Visualisasi:")
-            fig = px.scatter(
-                filtered_data, 
-                x='pca1', 
-                y='pca2', 
-                color='cluster_label', 
-                hover_data=['Customer Name', 'Reference to']
-            )
-            st.plotly_chart(fig)
-        except Exception as e:
-            st.write("An error occurred during PCA transformation:")
-            st.write(e)
     else:
         st.write("The uploaded CSV file does not contain all the required columns.")
