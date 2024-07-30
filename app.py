@@ -6,12 +6,17 @@ from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
+import plotly.express as px
+
+# Fungsi untuk menghitung jarak Euclidean
+def euclidean_distance(point, centroid):
+    return np.sqrt(np.sum((point - centroid)**2))
 
 # Membaca Data
 @st.cache_data
 def load_data(file):
     return pd.read_csv(file)
-    
+
 # Atur Tema
 st.markdown(
     """
@@ -23,13 +28,19 @@ st.markdown(
         --text-color: #262730;
         --font: sans-serif;
     }
+    .reportview-container {
+        background: #f0f2f6;
+    }
+    .markdown-text-container {
+        font-family: sans-serif;
+        color: #262730;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # Header
-#st.set_page_config(page_title="Clustering App For Leads Auto2000 Kramat Jati", page_icon=":bar_chart:", layout="wide")
 st.image("logoa2000.png", width=250)
 st.title("Clustering App For Leads Auto2000 Kramat Jati")
 st.write("Upload your CSV file to perform clustering")
@@ -40,19 +51,20 @@ file = st.file_uploader("Select a CSV file", type=["csv"])
 if file is not None:
     # Load data
     df = load_data(file)
+
+    # Remove 'action' column if it exists
     if 'action' in df.columns:
         df.drop(columns=['Action'], inplace=True)
+
     # Display data
-    #st.write("Upload Data:")
-    #st.write(df)
+    st.write("Uploaded Data:")
+    st.write(df)
 
     # Kolom untuk melakukan clustering
-    cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuensi penggunaan']
-
-   # Memisahkan kolom kolom
+    cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan']
     additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
+
     if all(col in df.columns for col in cols + additional_cols + ['Customer Name', 'Reference to']):
-        
         # Membuat clustering data frame
         clustering_data = df[cols + additional_cols + ['Customer Name', 'Reference to']]
 
@@ -64,13 +76,13 @@ if file is not None:
             'Frekuseni penggunaan': {'Setiap hari': 2, 'Di akhir pekan': 1, 'Sesekali': 0}
         }
 
-       for col, mapping in mappings.items():
+        for col, mapping in mappings.items():
             if col in clustering_data.columns:
                 clustering_data[col] = clustering_data[col].map(mapping)
 
         # Normalisasi Data
         scaler = MinMaxScaler()
-        clustering_data[col] = scaler.fit_transform(clustering_data[cols])
+        clustering_data[cols] = scaler.fit_transform(clustering_data[cols])
 
         # Melakukan clustering
         kmeans = KMeans(
@@ -84,18 +96,18 @@ if file is not None:
         clustering_data['cluster'] = kmeans.fit_predict(clustering_data[cols])
 
         # Mapping cluster
-        cluster_mapping = {0: 'Low', 1: 'Mid', 2: 'Hot'}
+        cluster_mapping = {0: 'low', 1: 'mid', 2: 'hot'}
         clustering_data['cluster_label'] = clustering_data['cluster'].map(cluster_mapping)
 
         # Menghitung silhouette score
-        #silhouette_avg = silhouette_score(clustering_data[cols], clustering_data['cluster'])
-        #st.write("Silhouette score clustering:", silhouette_avg)
+        silhouette_avg = silhouette_score(clustering_data[cols], clustering_data['cluster'])
+        st.write("Silhouette score clustering:", silhouette_avg)
         
         # Menghitung setiap centroid cluster
-        #centroids = kmeans.cluster_centers_
-        #st.write("Centroid setiap cluster:")
-        #for i, centroid in enumerate(centroids):
-        #    st.write(f"Cluster {i}: {centroid}")
+        centroids = kmeans.cluster_centers_
+        st.write("Centroid setiap cluster:")
+        for i, centroid in enumerate(centroids):
+            st.write(f"Cluster {i}: {centroid}")
 
         # Menampilkan hasil clustering
         st.write("Hasil clustering:")
@@ -106,28 +118,37 @@ if file is not None:
         clustering_data = clustering_data[ordered_cols]
 
         # Menampilkan hasil
-        #st.write("Data Final Clustering:")
-        #st.write(clustering_data)
+        st.write("Data Final Clustering:")
+        styled_df = clustering_data.style.background_gradient(cmap='coolwarm')
+        st.dataframe(styled_df)
 
         # Filter berdasarkan label cluster
-        selected_clusters = st.multiselect("Pilih cluster untuk ditampilkan", options=['Low', 'Mid', 'Hot'], default=['Low', 'Mid', 'Hot'])
+        selected_clusters = st.multiselect("Pilih cluster untuk ditampilkan", options=['low', 'mid', 'hot'], default=['low', 'mid', 'hot'])
         filtered_data = clustering_data[clustering_data['cluster_label'].isin(selected_clusters)]
 
         # Menampilkan data yang difilter
         st.write("Data setelah difilter berdasarkan cluster:")
         st.write(filtered_data)
 
-        # Menghitung jarak Euclidean dari setiap data ke centroid
-        #def euclidean_distance(point, centroid):
-         #   return np.sqrt(np.sum((point - centroid)**2))
+        # Apply PCA to reduce dimensions to 2D
+        try:
+            pca = PCA(n_components=2)
+            pca_components = pca.fit_transform(filtered_data[cols])
+            filtered_data['pca1'] = pca_components[:, 0]
+            filtered_data['pca2'] = pca_components[:, 1]
 
-        #clustering_data['distance_to_centroid'] = clustering_data.apply(
-          #  lambda row: euclidean_distance(row[cols].values, centroids[row['cluster']]),
-         #   axis=1
-        #)
-
-        #st.write("Data with Distance to Centroid:")
-        #st.write(clustering_data)
-        
+            # Plotting the clustering result using PCA scatter plot
+            st.write("PCA Clustering Visualisasi:")
+            fig = px.scatter(
+                filtered_data, 
+                x='pca1', 
+                y='pca2', 
+                color='cluster_label', 
+                hover_data=['Customer Name', 'Reference to']
+            )
+            st.plotly_chart(fig)
+        except Exception as e:
+            st.write("An error occurred during PCA transformation:")
+            st.write(e)
     else:
         st.write("The uploaded CSV file does not contain all the required columns.")
