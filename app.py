@@ -7,16 +7,11 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-# Fungsi untuk menghitung jarak Euclidean
-def euclidean_distance(point, centroid):
-    return np.sqrt(np.sum((point - centroid)**2))
-
 # Membaca Data
 @st.cache_data
 def load_data(file):
     return pd.read_csv(file)
-
+    
 # Atur Tema
 st.markdown(
     """
@@ -28,19 +23,13 @@ st.markdown(
         --text-color: #262730;
         --font: sans-serif;
     }
-    .reportview-container {
-        background: #f0f2f6;
-    }
-    .markdown-text-container {
-        font-family: sans-serif;
-        color: #262730;
-    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # Header
+#st.set_page_config(page_title="Clustering App For Leads Auto2000 Kramat Jati", page_icon=":bar_chart:", layout="wide")
 st.image("logoa2000.png", width=250)
 st.title("Clustering App For Leads Auto2000 Kramat Jati")
 st.write("Upload your CSV file to perform clustering")
@@ -52,28 +41,26 @@ if file is not None:
     # Load data
     df = load_data(file)
 
-    # Remove 'action' column if it exists
-    if 'Action' in df.columns:
-        df.drop(columns=['Action'], inplace=True)
-
     # Display data
-    st.write("Uploaded Data:")
+    st.write("Upload Data:")
     st.write(df)
 
     # Kolom untuk melakukan clustering
-    cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan']
-    additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
+    cols = ['Keinginan memiliki mobil', 'Kesiapan pembayaran booking fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan mobil']
 
-    if all(col in df.columns for col in cols + additional_cols + ['Customer Name', 'Reference to']):
+   # Memisahkan kolom kolom
+    additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan']
+    if all(col in df.columns for col in cols + additional_cols + ['Nama Customer', 'Reference To']):
+        
         # Membuat clustering data frame
-        clustering_data = df[cols + additional_cols + ['Customer Name', 'Reference to']]
+        clustering_data = df[cols + additional_cols + ['Nama Customer', 'Reference To']]
 
         # Encode label data kategori
         mappings = {
-            'Keinginan membeli': {'0-1 Bulan': 2, '1-3 Bulan': 1, '3-6 Bulan': 0},
-            'Kesiapan pembayaran fee': {'Minggu ini': 2, 'Bulan ini': 1, 'Belum menentukan': 0},
-            'Kapan dapat ditemui secara langsung': {'1-2 Minggu': 2, '1 Bulan': 1, 'Belum menentukan': 0},
-            'Frekuseni penggunaan': {'Setiap hari': 2, 'Di akhir pekan': 1, 'Sesekali': 0}
+            'Keinginan memiliki mobil': {'0-1 bulan': 2, '1-3 bulan': 1, '3-6 bulan': 0},
+            'Kesiapan pembayaran booking fee': {'minggu ini': 2, 'bulan ini': 1, 'belum menentukan': 0},
+            'Kapan dapat ditemui secara langsung': {'1-2 minggu': 2, '1 bulan': 1, 'belum menentukan': 0},
+            'Frekuseni penggunaan mobil': {'setiap hari': 2, 'diakhir pekan': 1, 'sesekali': 0}
         }
 
         for col, mapping in mappings.items():
@@ -109,32 +96,53 @@ if file is not None:
         for i, centroid in enumerate(centroids):
             st.write(f"Cluster {i}: {centroid}")
 
-        # Menghitung jarak data ke centroid
+        # Menampilkan hasil clustering
+        st.write("Hasil clustering:")
+        st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
+
+        # Memanngil kolom kembali
+        ordered_cols = ['Nama Customer', 'Reference To', 'Phone', 'Model', 'Product Desc.', 'Anggaran untuk membeli mobil', 'Metode pembayaran yang diinginkan', 'cluster', 'cluster_label'] + cols
+        clustering_data = clustering_data[ordered_cols]
+
+        # Menampilkan hasil
+        st.write("Data Final Clustering:")
+        st.write(clustering_data)
+
+        # Menghitung jarak Euclidean dari setiap data ke centroid
+        def euclidean_distance(point, centroid):
+            return np.sqrt(np.sum((point - centroid)**2))
+
         clustering_data['distance_to_centroid'] = clustering_data.apply(
             lambda row: euclidean_distance(row[cols].values, centroids[row['cluster']]),
             axis=1
         )
 
-        # Menampilkan hasil clustering
-        st.write("Hasil clustering:")
-        st.write(clustering_data[['Customer Name', 'Reference to', 'cluster', 'cluster_label']])
+        st.write("Data with Distance to Centroid:")
+        st.write(clustering_data)
+        
+        # Apply PCA to reduce dimensions to 2D
+        try:
+            pca = PCA(n_components=2)
+            pca_components = pca.fit_transform(clustering_data[cols])
+            clustering_data['pca1'] = pca_components[:, 0]
+            clustering_data['pca2'] = pca_components[:, 1]
 
-        # Memanngil kolom kembali
-        ordered_cols = ['Customer Name', 'Reference to', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran', 'cluster', 'cluster_label'] + cols
-        clustering_data = clustering_data[ordered_cols]
+            # Plotting the clustering result using PCA scatter plot
+            st.write("PCA Clustering Visualisasi:")
+            fig, ax = plt.subplots()
+            scatter = ax.scatter(clustering_data['pca1'], clustering_data['pca2'], c=clustering_data['cluster'])
+            ax.set_xlabel('PCA Component 1')
+            ax.set_ylabel('PCA Component 2')
+            ax.set_title("PCA Clustering Result")
 
-        # Menampilkan hasil
-        st.write("Data Final Clustering:")
-        styled_df = clustering_data.style.background_gradient(cmap='coolwarm')
-        st.dataframe(styled_df)
+            # Adding legend
+            legend1 = ax.legend(*scatter.legend_elements(), title="Clusters")
+            ax.add_artist(legend1)
 
-        # Filter berdasarkan label cluster
-        selected_clusters = st.multiselect("Pilih cluster untuk ditampilkan", options=['low', 'mid', 'hot'], default=['low', 'mid', 'hot'])
-        filtered_data = clustering_data[clustering_data['cluster_label'].isin(selected_clusters)]
-
-        # Menampilkan data yang difilter
-        st.write("Data setelah difilter berdasarkan cluster:")
-        st.write(filtered_data)
-
-else:
-    st.write("The uploaded CSV file does not contain all the required columns.")
+            # Display the plot in Streamlit
+            st.pyplot(fig)
+        except Exception as e:
+            st.write("An error occurred during PCA transformation:")
+            st.write(e)
+    else:
+        st.write("The uploaded CSV file does not contain all the required columns.")
