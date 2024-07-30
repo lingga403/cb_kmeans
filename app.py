@@ -66,7 +66,7 @@ if file is not None:
 
         for col, mapping in mappings.items():
             if col in clustering_data.columns:
-                clustering_data[col] = clustering_data[col].map(mapping)
+                clustering_data[cols] = clustering_data[cols].map(mapping)
 
         # Normalisasi Data
         scaler = MinMaxScaler()
