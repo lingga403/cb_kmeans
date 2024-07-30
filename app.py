@@ -97,8 +97,8 @@ if file is not None:
         #    st.write(f"Cluster {i}: {centroid}")
 
         # Menampilkan hasil clustering
-        # st.write("Hasil clustering:")
-        # st.write(clustering_data[['Nama Customer', 'Reference To', 'cluster', 'cluster_label']])
+        st.write("Hasil clustering:")
+        st.write(clustering_data[['Nama Customer', 'Reference to', 'cluster', 'cluster_label']])
 
         # Memanngil kolom kembali
         ordered_cols = ['Customer Name', 'Reference to', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran', 'cluster', 'cluster_label'] + cols
