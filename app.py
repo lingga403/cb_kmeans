@@ -136,5 +136,5 @@ if file is not None:
         st.write("Data setelah difilter berdasarkan cluster:")
         st.write(filtered_data)
 
-    else:
-        st.write("The uploaded CSV file does not contain all the required columns.")
+else:
+    st.write("The uploaded CSV file does not contain all the required columns.")
