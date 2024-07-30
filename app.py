@@ -50,7 +50,7 @@ if file is not None:
 
    # Memisahkan kolom kolom
     additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
-    if all(col in df.columns for col in cols + additional_cols + ['Nama Customer', 'Reference to']):
+    if all(col in df.columns for col in cols + additional_cols + ['Customer Name', 'Reference to']):
         
         # Membuat clustering data frame
         clustering_data = df[cols + additional_cols + ['Customer Name', 'Reference to']]
