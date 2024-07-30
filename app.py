@@ -31,7 +31,7 @@ st.markdown(
 # Header
 #st.set_page_config(page_title="Clustering App For Leads Auto2000 Kramat Jati", page_icon=":bar_chart:", layout="wide")
 st.image("logoa2000.png", width=250)
-st.title("Clustering App For Leads Auto2000 Kramat Jati")
+st.title("Clustering App  Leads Auto2000 Kramat Jati")
 st.write("Upload your CSV file to perform clustering")
 
 # Melakukan Upload Data
