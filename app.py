@@ -64,13 +64,13 @@ if file is not None:
             'Frekuseni penggunaan': {'Setiap hari': 2, 'Di akhir pekan': 1, 'Sesekali': 0}
         }
 
-        for col, mapping in mappings.items():
+       for col, mapping in mappings.items():
             if col in clustering_data.columns:
-                clustering_data[cols] = clustering_data[cols].map(mapping)
+                clustering_data[col] = clustering_data[col].map(mapping)
 
         # Normalisasi Data
         scaler = MinMaxScaler()
-        clustering_data[cols] = scaler.fit_transform(clustering_data[cols])
+        clustering_data[col] = scaler.fit_transform(clustering_data[cols])
 
         # Melakukan clustering
         kmeans = KMeans(
