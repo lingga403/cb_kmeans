@@ -11,22 +11,6 @@ import numpy as np
 @st.cache_data
 def load_data(file):
     return pd.read_csv(file)
-    
-# Atur Tema
-st.markdown(
-    """
-    <style>
-    :root {
-        --primary-color: #f0f2f6;
-        --background-color: #ffffff;
-        --secondary-background-color: #D0D0D0;
-        --text-color: #262730;
-        --font: sans-serif;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 # Header
 #st.set_page_config(page_title="Clustering App For Leads Auto2000 Kramat Jati", page_icon=":bar_chart:", layout="wide")
