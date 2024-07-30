@@ -42,14 +42,14 @@ if file is not None:
     df = load_data(file)
 
     # Display data
-    st.write("Upload Data:")
-    st.write(df)
+    #st.write("Upload Data:")
+    #st.write(df)
 
     # Kolom untuk melakukan clustering
     cols = ['Keinginan membeli', 'Kesiapan pembayaran fee', 'Kapan dapat ditemui secara langsung', 'Frekuseni penggunaan']
 
    # Memisahkan kolom kolom
-    additional_cols = ['Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
+    additional_cols = ['No.', 'Action', 'Reference From', 'Leads Date', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran']
     if all(col in df.columns for col in cols + additional_cols + ['Customer Name', 'Reference to']):
         
         # Membuat clustering data frame
@@ -98,7 +98,7 @@ if file is not None:
 
         # Menampilkan hasil clustering
         st.write("Hasil clustering:")
-        st.write(clustering_data[['Nama Customer', 'Reference to', 'cluster', 'cluster_label']])
+        st.write(clustering_data[['Customer Name', 'Reference to', 'cluster', 'cluster_label']])
 
         # Memanngil kolom kembali
         ordered_cols = ['Customer Name', 'Reference to', 'Phone', 'Model', 'Product Desc.', 'Anggaran pembelian', 'Metode pembayaran', 'cluster', 'cluster_label'] + cols
